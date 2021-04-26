@@ -1,0 +1,87 @@
+---
+title: "oztok_final"
+author: "Oztok"
+date: "4/23/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+#LOAD THE DATA AND IMPORT
+<br>
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(tidyverse)
+library(lubridate)
+library(ggrepel)
+states <- map_data("state")
+accidents <- read.csv("us_accidents_df.csv", stringsAsFactors = FALSE)
+```
+<br>
+
+
+
+#A frequency table for severity
+<br>
+```{r}
+severity_count <- c(sum(accidents$Severity==1), sum(accidents$Severity==2), sum(accidents$Severity==3), sum(accidents$Severity==4))
+freq <- severity_count/sum(severity_count )
+barplot(freq, names.arg = 1:4, main = "Relative Frequencies of Severity")
+```
+<br>
+
+
+#Analyze temperature
+<br>
+```{r}
+hist(accidents$Temperature.F., breaks=seq(-90, 205, 5), xlab = "Temperature (Fahrenheit)", main = "Histogram of Temperature")
+```
+<br>
+
+
+#Analyze wind_chill
+<br>
+```{r}
+hist(accidents$Wind_Chill.F., breaks=seq(-90, 190, 5), xlab = "Wind Chill (Fahrenheit)", main = "Histogram of Wind Chill")
+```
+<br>
+
+
+
+#Analyze visibility
+<br>
+```{r}
+temp4 <- accidents$Visibility.mi.
+temp4 = temp4[temp4 < 12]
+hist(temp4, breaks=seq(0,12,2), xlab = "Visibility (miles)", main = "Histogram of Visibility")
+visibility_outliers <- accidents[ which(accidents$Visibility.mi. > 20), ]
+```
+<br>
+
+
+#Analyze the weather condition by severity
+<br>
+```{r}
+weather_cond<-table(accidents$Weather_Condition, accidents$Severity)
+weather_cond
+weather_cond_df<-data.frame(weather_cond)
+colnames(weather_cond_df)<-c("Weather_Condition","Severity","Accidents")
+weather_cond_df <- weather_cond_df %>% 
+  filter(Severity == 4) %>% 
+  arrange(desc(Accidents)) %>% 
+  filter(Accidents > 100)
+
+b <- ggplot(data=weather_cond_df, aes(x=Weather_Condition, y=Accidents)) + geom_bar(stat="identity") + coord_flip()
+b
+
+    #Weather condition does not have a strong impact on accident severity
+
+```
+<br>
+
