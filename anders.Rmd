@@ -5,26 +5,48 @@ date: "4/25/2021"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(rmarkdown)
+library(lubridate)
 ```
 
-## R Markdown
+# Preprocessing
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r}
+acc_raw <- read_csv('US_Accidents_Dec20.csv')
+census_raw <- read.csv('census2010-2019.csv')
+states <- map_data('state')
+abv <- read.csv('state_abbrvs.csv', fileEncoding="UTF-8-BOM")
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
+# === Census Preprocessing ===
+
+census <- census_raw %>%
+  mutate(across(Census:X2019, function(x){as.numeric(gsub(",", "", x))})) %>%
+  separate(Geographic.Area, sep=', ', into=c('City', 'region')) %>%
+  group_by(region) %>%
+  summarize(
+    `2016`=sum(X2016),
+    `2017`=sum(X2017),
+    `2018`=sum(X2018),
+    `2019`=sum(X2019)
+  ) %>%
+  pivot_longer(`2016`:`2019`, names_to='Year') %>%
+  mutate(Year=as.numeric(Year))
+
+
+# === Accidents Preprocssing ===
+
+acc <- acc_raw %>%
+  mutate(Code=State) %>%
+  select(-State) %>%
+  left_join(abv, by='Code') %>%
+  select(Start_Time, Start_Lat, Start_Lng, State) %>%
+  mutate(State=tolower(State), Time=ymd_hms(Start_Time)) %>%
+  select(-Start_Time)
+  
+  
+
 ```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

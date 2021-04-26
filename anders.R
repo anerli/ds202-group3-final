@@ -99,6 +99,7 @@ acc_yr <- smpl %>%
 acc_yr <- acc %>% 
   mutate(Time=ymd_hms(Start_Time), Year=year(Time))
 
+# FIXME
 acc2019 <- acc_yr %>% filter(Year==2019)
 str(acc2019)
 
@@ -124,12 +125,26 @@ ggplot(acc_map_capita, aes(x=long, y=lat)) + geom_polygon(aes(group=group, fill=
 
 #acc_map_per1000 <- acc_map_capita %>% mutate(per1000=total_yearly_accidents_per_capita*1000)
 #ggplot(acc_map_per1000)
-acc2019_states %>% mutate(per1000=total_yearly_accidents_per_capita*1000) %>% ggplot(aes(x=State, weight=per1000)) + geom_bar() + coord_flip()
+acc2019_states %>%
+  arrange(total_yearly_accidents_per_capita)
+
+col <- c(rep(c('grey50'), 8), c('red'), rep(c('grey50'), 40))
+col <- rep(c('grey50'), 49)
+#col <- rep(c('red'), nrow(acc2019_states))
+
+acc2019_states %>% 
+  mutate(State=str_to_title(State)) %>%
+  mutate(per1000=total_yearly_accidents_per_capita*1000) %>%
+  arrange(total_yearly_accidents_per_capita) %>%
+  mutate(State=factor(State, levels=State)) %>%
+  ggplot(aes(x=State, weight=per1000, fill=State)) + geom_bar() + coord_flip() +
+  scale_fill_manual(values=col) +
+  ylab('Accidents per 1000 People in 2019')
 
 acc_map_per1000 <- acc_map_capita %>% mutate(`Yearly Accidents per 1000 People`=total_yearly_accidents_per_capita*1000)
 p1 <- ggplot(acc_map_per1000, aes(x=long, y=lat)) + 
   geom_polygon(aes(group=group, fill=`Yearly Accidents per 1000 People`)) + 
   coord_map() + ggtitle('Per Capita Accidents in 2019')
-p1 + scale_fill_continuous(type = "viridis")#scale_color_gradient(low="#000000", high="#FFFFFF")
+
 p1 + scale_fill_gradient(low="#222222", high="magenta2")
 #pivot_wider()
