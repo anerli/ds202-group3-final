@@ -1,0 +1,100 @@
+---
+title: "Final Project"
+author: "Ryan Scehovic"
+date: "4/22/2021"
+output: html_document
+---
+
+```{r}
+library(dplyr)
+library(data.table)
+library(ggplot2)
+library(tidyverse)
+library(readxl)
+library(maps)
+library(lubridate)
+library("RSQLite")
+```
+
+```{r}
+data1 <- fread("/Users/ryans/OneDrive/Desktop/DS202/finalProject/ds202-group3-final/US_Accidents.csv")
+data2 <- fread("/Users/ryans/OneDrive/Desktop/DS202/finalProject/ds202-group3-final/BigML_Dataset.csv")
+
+data2 <- na.omit(data2)
+data2 <- data2 %>% rename(fatals = 'Fatalities in crash')
+#head(usData, 10)
+head(data2, 10)
+```
+
+```{r}
+f1 <- data2 %>% group_by(Age, Gender) %>% summarize(count = n()) %>% arrange(desc(count))
+ggplot(f1, aes(x=Age, y = count, fill = Gender)) + geom_bar(stat="identity", position = "dodge") + xlab("Age (years)") + ylab("Number of Car Accidents") + ggtitle("Number of Accidents Given Age and Gender")
+
+#f1 <- data2 %>% group_by(Age) %>% summarize(count = ) %>% arrange(desc(count))
+#ggplot(f1, aes(x=Age, y = count)) + geom_bar(stat="identity", position = "dodge") + xlab("Age (years)") + ylab("Number of Car Accidents") + ggtitle("Number of Accidents Given Age")
+
+
+f2 <- data2 %>% group_by(Age)
+aggregate(f2$'Alcohol Results',list(f2$Age), FUN = mean)
+
+f2 <- f2 %>% summarise(fatals = sum(fatals))
+ggplot(f2, aes(x=Age, y = fatals)) + geom_bar(stat="identity", position = "dodge")
+
+#ggplot(data2, aes(x = Age, y = 'Alcohol Results')) + geom_point()
+
+data2$dates <- as.Date(data2$'Crash Date', "%m/%d/%y")
+f3 <- data2 %>% group_by(dates) %>% summarize(count = n())
+ggplot(f3, aes(x = dates, y = count)) + geom_bar(stat="identity", position = "dodge")
+
+
+f3 <- data2
+#f3 <- f3 %>% mutate(dates = lubridate::mdy(dates), months = lubridate::month(dates), days = lubridate::day(dates), years = lubridate::year(dates))
+#f3$weekday <- weekdays(f3$dates)
+#f3 %>% group_by(Age) %>% summarize(c2 = n()) %>% arrange(desc(c2))
+#ggplot(f3, aes(x = Age, y = 'Alcohol Result') + geom_line() + facet_grid(~month(dates, label = TRUE)) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+f3 <- f3 %>% group_by(dates) %>% summarize(fatals = sum(fatals)) 
+ggplot(f3, aes(x=dates, y = fatals)) + geom_bar(stat="identity", position = "dodge") + xlab("Time") + ylab("Number of Car Accidents") + ggtitle("Number of Accidents Over Time")
+
+#f4 <- data2
+#f4 <- f4 %>% group_by(dates) %>% summarize(fatals = sum(fatals)) 
+#ggplot(f3, aes(x=dates, y = fatals, color = Age)) + geom_point() + xlab("Time") + ylab("Number of Car Accidents") + ggtitle("Number of Accidents Over Time")
+
+
+temp <- data2
+temp$weekday <- weekdays(temp$dates)
+temp2 <- temp
+temp <- temp %>% group_by(weekday, Gender) %>% summarize(N = n()) %>% arrange(desc(N))
+ggplot(temp, aes(x = reorder(weekday, -N), y = N, fill = Gender)) + geom_bar(stat = "identity", position = "dodge") + xlab("Day of the Week") + ylab("Number of Car Accidents") + ggtitle("Accidents")
+
+
+temp2$group1 <- ifelse(temp2$Age < 41, "Under35", "35andUp")
+temp3 <- temp2 %>% group_by(weekday, Gender) %>% filter(group1 == "Under35") %>% summarize(N = n()) %>% arrange(desc(N))
+ggplot(temp3, aes(x = reorder(weekday, -N), y = N, fill = Gender)) + geom_bar(stat = "identity", position = "dodge") + xlab("Day of the Week") + ylab("Number of Car Accidents") + ggtitle("Under 41 Age Group")
+
+temp4 <- temp2 %>% group_by(weekday, Gender) %>% filter(group1 == "35andUp") %>% summarize(N = n()) %>% arrange(desc(N))
+ggplot(temp4, aes(x = reorder(weekday, -N), y = N, fill = Gender)) + geom_bar(stat = "identity", position = "dodge") + xlab("Day of the Week") + ylab("Number of Car Accidents") + ggtitle("41 and Older Group")
+
+mean(data2$Age, na.rm = TRUE)
+
+g1 <- temp2$group1
+u35 = 0
+o35 = 0
+
+#used for testing
+for(x in 1:length(temp2)) {
+  if(temp2$group1[x] == "Under35") {
+    u35 <- u35 + 1
+  }
+}
+
+for(x in 1:length(temp2)) {
+  if(temp2$group1[x] == "35andUp") {
+    o35 <- o35 + 1
+  }
+}
+
+
+```
+
+

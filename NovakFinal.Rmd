@@ -1,0 +1,60 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+```{r}
+suppressMessages(library("lubridate"))
+suppressMessages(library(tidyverse))
+suppressMessages(library(ggplot2))
+suppressMessages(library(maps))
+suppressMessages(library(ggthemes))
+suppressMessages(library(ggrepel))
+```
+
+#Load Data Frames
+```{r}
+suppressMessages(census <- read_csv("/Users/jacknovak/Documents/DS202/ds202-group3-final/census.csv")%>%
+  filter(STNAME == "Iowa", PRIMGEO_FLAG == 0, FUNCSTAT == "A"))
+iowa <- read_csv("/Users/jacknovak/Documents/DS202/ds202-group3-final/US_Accidents_Dec20.csv", col_types = cols(End_Lat=col_character(),End_Lng=col_character()))%>%
+  select(State, Severity, Start_Time, Start_Lat, Start_Lng, `Wind_Speed(mph)`,Weather_Condition)%>%
+  filter(State %in% "IA")
+
+county <- map_data("county")
+```
+
+#Plot Accidents in Iowa
+```{r}
+iowacounties<- county%>%
+  filter(region %in% "iowa")
+
+p<-ggplot(iowacounties, aes(x=long, y=lat))+geom_polygon(aes(group=group))
+p<-p+geom_point(data=iowa, aes(x=Start_Lng, y=Start_Lat, color=factor(Severity), alpha=0.15))
+p<-p+labs(title="Accidents in Iowa", subtitle="Data from 2016 to 2020")+theme_map()
+p
+```
+#Plot Severity by Wind Speed and Weather Type
+```{r}
+iowa1<-iowa%>%
+  select(`Wind_Speed(mph)`,Severity, `Weather_Condition`)%>%
+  group_by(Weather_Condition)%>%
+  summarize(`Average Severity` = mean(Severity), `Average Wind Speed (mph)` = mean(`Wind_Speed(mph)`), n=n())%>%
+  filter(n>9)
+
+ggplot(iowa1, aes(y=`Average Severity`, x=`Average Wind Speed (mph)`))+geom_text(aes(label=`Weather_Condition`), size=2)+labs(title="Severity and Wind Speed by Weather Type")
+```
+
+#Accidents in Iowa by Day of the Week
+```{r}
+iowa %>%
+  mutate(Day = wday(Start_Time, label=TRUE, abbr=FALSE))%>%
+  group_by(Day)%>%
+  ggplot(aes(x=Day))+geom_bar()+labs(title="Accidents in Iowa by Weekday")
+```
+
+
+
+
+
+

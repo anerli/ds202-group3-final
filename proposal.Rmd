@@ -1,0 +1,33 @@
+---
+title: "Project Proposal"
+author: "Group 3"
+date: "3/29/2021"
+output: html_document
+---
+
+# Names
+Anders Lie, Jackson Novak, Ryan Scehovic, Eric Steyer, Murat Oztok
+
+# Link to Data Source
+https://www.kaggle.com/sobhanmoosavi/us-accidents
+
+https://www.census.gov/data/datasets/time-series/demo/popest/2010s-total-cities-and-towns.html
+
+# Overview of Dataset
+
+## US Accidents
+Contains traffic incident data from 49 states in the U.S. from Feb 2016 to Dec 2020.
+
+This dataset has about 4.2 million accident records.
+
+Includes 49 columns, such as locational data, date/time, severity, weather data, and information about the road properties / signs where it happened.
+
+## Census City and Population Totals
+Contains populations for U.S. cities with populations of 50,000 or more, from 2010 to 2019.
+
+## Exploratory Analysis
+- Where do the most accidents happen?
+- In which states are there the most accidents with respect to population?
+- How does the weather affect accident frequency and severity?
+- Did the pandemic restrictions affect the frequency of accidents?
+- How do road properties and signs affect frequency of accidents? For example, presence of stop signs, bumps, road junctions, etc.
