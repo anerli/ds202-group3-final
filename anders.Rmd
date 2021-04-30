@@ -67,13 +67,6 @@ states <- states %>%
   select(-region, -subregion)
 ```
 
-
-```{r}
-acc %>% paged_table
-census %>% paged_table
-states %>% paged_table
-```
-
 First, we can visualize the accidents all over the U.S. by plotting them as points over a map of the U.S.
 
 ```{r}
@@ -95,8 +88,11 @@ acc_states <- acc %>% group_by(State) %>% summarize(total_accidents=n())
 
 acc_map <- acc_states %>% left_join(states, by='State')
 
-p2 <- ggplot(acc_map, aes(x=long, y=lat)) + geom_polygon(aes(group=group, fill=total_accidents)) + coord_map() + labs(fill='Total Accidents')
-p2 + scale_fill_gradient(low="#222222", high="magenta2")
+ggplot(acc_map, aes(x=long, y=lat)) + 
+  geom_polygon(aes(group=group, fill=total_accidents)) + 
+  coord_map() + labs(fill='Total Accidents') + 
+  scale_fill_gradient(low="#222222", high="magenta2") + 
+  ggtitle('Total Accidents from 2016 to 2020 by State')
 ```
 
 Above we can see that clearly the states with the highest populations (California, Texas, Florida) 
@@ -106,15 +102,9 @@ look at the per capita accident rates.
 ```{r}
 acc2019 <- acc %>% filter(year(Time)==2019)
 
-#acc2019 %>% group_by(State) %>% summarize(n=n())
-
 census2019 <- census %>% filter(Year==2019)
 
-census2019 %>% paged_table
-
 acc2019 <- acc2019 %>% left_join(census2019, by='State')
-
-acc2019 %>% paged_table
 
 acc2019_states <- acc2019 %>% 
   group_by(State) %>%
@@ -123,9 +113,6 @@ acc2019_states <- acc2019 %>%
 acc2019_states %>% paged_table
 
 acc_map_capita <- acc2019_states %>% left_join(states, by=c('State'))
-
-# Total accidents
-ggplot(acc_map_capita, aes(x=long, y=lat)) + geom_polygon(aes(group=group, fill=per1000)) + coord_map()
 
 ggplot(acc_map_capita, aes(x=long, y=lat)) + 
   geom_polygon(aes(group=group, fill=per1000)) + 
@@ -147,7 +134,8 @@ acc2019_states %>%
   mutate(State=factor(State, levels=State)) %>%
   ggplot(aes(x=State, weight=per1000, fill=State)) + geom_bar() + coord_flip() +
   scale_fill_manual(values=col) +
-  ylab('Accidents per 1000 People in 2019')
+  ylab('Accidents per 1000 People in 2019') +
+  theme(legend.position = "none")
 ```
 
 We can see that South Carolina has approximately double the accident rate of Oregon.
