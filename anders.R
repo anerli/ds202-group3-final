@@ -10,6 +10,9 @@ acc_raw <- read.csv('US_Accidents_Dec20.csv')
 acc <- acc_raw
 
 
+acc_raw <- read_csv('US_Accidents_Dec20.csv')
+write_csv(sample_n(acc_raw, 10000), 'US_Accidents_Sample.csv')
+
 str(acc)
 
 nrow(acc) # 4232541
