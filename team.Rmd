@@ -217,6 +217,91 @@ Iowans typically crash the most on weekdays. This result is pretty intuitive--pe
 
 <!-- End of Jack --->
 
+<!-- Start of Eric --->
+
+```{r}
+acc = read.csv("US_Accidents_Dec20.csv")
+```
+
+```{r}
+acc = separate(acc, Start_Time, into = c("Date", "Time"), sep = " ")
+```
+
+```{r}
+acc$Date = ymd(acc$Date)
+```
+
+```{r}
+acc$Year = year(acc$Date)
+acc$Month = month(acc$Date)
+acc$Day = day(acc$Date)
+```
+
+```{r}
+daily_acc = acc %>% group_by(Date) %>% summarise(n = n()) %>% mutate(year = year(Date))
+```
+
+Here we had to separate the Start_Time column into time and date, then convert the date into Date format using the lubridate library. 
+
+## 2016-2020 Daily Accidents in America
+
+```{r}
+daily_acc %>% ggplot(aes(x=Date, y=n)) + geom_line() + facet_wrap(~year, scales = "free_x") + scale_x_date(date_labels = "%b")
+```
+
+This is a time series of the number of daily accidents. We can see from this graph that the number of accidents remains fairly consistent over time, with only slight jumps, probably caused by adding more ways of obtaining accident data. 2020 is the year that is much different from the rest, with the number of accidents dipping during the pandemic, and then rising higher than the pre-pandemic numbers.
+
+## 2020 Daily Accidents in America
+
+```{r}
+daily_acc %>% filter(year == 2020) %>% ggplot(aes(x=Date, y=n)) + geom_line() + facet_wrap(~year, scales = "free_x")
+```
+
+Here we can see a better look of what happened in 2020. This graph, along with some research, tells us that driving speeds increased during the pandemic, which led to more accidents once more cars returned to the road.
+
+## Total Accidents by Month
+
+```{r}
+daily_acc %>% filter(year != 2016) %>% group_by(month(Date)) %>% summarise(n=sum(n)) %>% rename("month" = "month(Date)") %>% ggplot(aes(x=month, y=n)) + geom_bar(stat = "identity")
+```
+
+This graph shows us that July is the month with the fewest accidents from 2017 to 2020, and December is the month with the most. This is all due to the numbers in 2020, because the months were pretty even until then.
+
+## 2016-2020 Severe Accidents in America
+
+```{r}
+acc %>% filter(Severity==4) %>% group_by(Date) %>% summarise(n = n()) %>% mutate(year = year(Date)) %>% ggplot(aes(x=Date, y=n)) + geom_line() + facet_wrap(~year, scales = "free_x") + scale_x_date(date_labels = "%b")
+```
+
+This is a look at the severe accidents (accidents with the highest severity score) per day. Here we can see that the numbers remained the same for the most part until the pandemic hit, when numbers then spiked.
+
+## 2020 Severe Accidents in America
+
+```{r}
+acc %>% filter(Severity==4, Year==2020) %>% group_by(Date) %>% summarise(n = n()) %>% mutate(year = year(Date)) %>% ggplot(aes(x=Date, y=n)) + geom_line() + facet_wrap(~year, scales = "free_x") + scale_x_date(date_labels = "%b")
+```
+
+Here is a closer look at the year 2020, and we can see the large spike at the start of the pandemic. Research found that driving speeds increased with fewer cars on the road, so those higher speeds might have led to more severe accidents.
+
+## 2016-2020 Accidents in Iowa
+
+```{r}
+acc %>% filter(State=="IA") %>% group_by(Date) %>% summarise(n = n()) %>% mutate(year = year(Date)) %>% ggplot(aes(x=Date, y=n)) + geom_line() + facet_wrap(~year, scales = "free_x") + scale_x_date(date_labels = "%b")
+```
+
+This chart is a look at the number of daily accidents in the state of Iowa. We can see from this graph that the drivers in Iowa performed much like the rest of the United States. There was a large spike in the number of accidents at the end of 2020.
+
+## 2020 Accidents in Iowa
+
+```{r}
+acc %>% filter(Year == 2020, State=="IA") %>% group_by(Date) %>% summarise(n = n()) %>% mutate(year = year(Date)) %>% ggplot(aes(x=Date, y=n)) + geom_line() + facet_wrap(~year, scales = "free_x") + scale_x_date(date_labels = "%b")
+```
+
+Looking closer at 2020, we can see that spike at the end of 2020. This, along with the prior graph, tells us that the driving behavior of Iowans matches the driving behavior of the rest of America.
+
+
+<!-- End of Eric --->
+
 Conclusion:
 	
 Although motor vehicle crashes are calamitous and will remain a problem into the future, our report reveals key signs of hope. Namely, we identified disparities in the number and severity of crashes across locations, suggesting states with very high crash rates may be able to reduce their crash rate through policy intervention.
@@ -227,7 +312,7 @@ Contribution Statement:
 
 Anders:
 
-Eric:
+Eric: My analysis focused on the changes in number of daily accidents over the years. This analysis focused heavily on the impact of COVID-19, because the pandemic had a large impact on traffic, and therefore the number of accidents. I also contributed to the team report and presentation.
 
 Jack: My analyses focused primarily on Iowa. I created a map of Iowa and two additional graphics to represent accidents by weekday and by weather type. I also contributed to this report as well as the project presentation.
 
