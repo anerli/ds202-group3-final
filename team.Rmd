@@ -8,6 +8,7 @@ output: html_document
 library(tidyverse)
 library(rmarkdown)
 library(lubridate)
+library(ggthemes)
 ```
 
 <!-- Start of Anders --->
@@ -146,19 +147,23 @@ We can see Iowa highlighted in red. Iowa is clearly not the worst in terms of ac
 many states have far worse rates, but there is also still room for improvement as there
 are a few states with lower accident rates than Iowa.
 <!-- End of Anders --->
-
+  
+  
+  
 <!-- Start of Jack --->
 
 #Load Data Frames
-```{r}
-suppressMessages(census <- read_csv("/Users/jacknovak/Documents/DS202/ds202-group3-final/census.csv")%>%
-  filter(STNAME == "Iowa", PRIMGEO_FLAG == 0, FUNCSTAT == "A"))
+```{r, message=FALSE}
+census <- read_csv("/Users/jacknovak/Documents/DS202/ds202-group3-final/census.csv")%>%
+  filter(STNAME == "Iowa", PRIMGEO_FLAG == 0, FUNCSTAT == "A")
 iowa <- read_csv("/Users/jacknovak/Documents/DS202/ds202-group3-final/US_Accidents_Dec20.csv", col_types = cols(End_Lat=col_character(),End_Lng=col_character()))%>%
   select(State, Severity, Start_Time, Start_Lat, Start_Lng, `Wind_Speed(mph)`,Weather_Condition)%>%
   filter(State %in% "IA")
 
 county <- map_data("county")
 ```
+
+We also decided to look at accidents close to home. Evident in the map below, accidents in Iowa cluster in areas we know to be the most congested; namely, many accidents occur around Des Moines and along I-35 and I-80. Additionally, Iowa's northwestern corner appears to exhibit disproportionately many severe accidents relative to non-severe ones.
 
 #Plot Accidents in Iowa
 ```{r}
@@ -170,16 +175,28 @@ p<-p+geom_point(data=iowa, aes(x=Start_Lng, y=Start_Lat, color=factor(Severity),
 p<-p+labs(title="Accidents in Iowa", subtitle="Data from 2016 to 2020")+theme_map()
 p
 ```
+
+Nearly any Iowan can testify to the hazards of slippery weather. However, we sought to quantify weather's influence on accident frequency and severity by observing crashes recorded in Iowa over the past five years.
+
 #Plot Severity by Wind Speed and Weather Type
 ```{r}
 iowa1<-iowa%>%
   select(`Wind_Speed(mph)`,Severity, `Weather_Condition`)%>%
+  na.omit()%>%
   group_by(Weather_Condition)%>%
   summarize(`Average Severity` = mean(Severity), `Average Wind Speed (mph)` = mean(`Wind_Speed(mph)`), n=n())%>%
-  filter(n>9)
+  filter(n>15)
+```
 
+Slippery conditions are generally associated with the most severe crashes. Accidents in 'light freezing rain' were the most severe by a considerable margin, followed by snow, rain, and light thunderstorms. 
+
+Based on the results, Iowans should limit driving on days with lots of precipitation and reduce their speeds. 
+
+```{r}
 ggplot(iowa1, aes(y=`Average Severity`, x=`Average Wind Speed (mph)`))+geom_text(aes(label=`Weather_Condition`), size=2)+labs(title="Severity and Wind Speed by Weather Type")
 ```
+
+Iowans typically crash the most on weekdays. This result is pretty intuitive--people tend to drive more during the week.
 
 #Accidents in Iowa by Day of the Week
 ```{r}
@@ -190,3 +207,13 @@ iowa %>%
 ```
 
 <!-- End of Jack --->
+
+Conclusion:
+	
+Although motor vehicle crashes are calamitous and will remain a problem into the future, our report reveals key signs of hope. Namely, we identified disparities in the number and severity of crashes across locations, suggesting states with very high crash rates may be able to reduce their crash rate through policy intervention.
+
+Our data set supported the finding that the COVID-19 significantly increased the number and severity of motor vehicle crashes. We noted that the severity of crashes initially increased, then lulled, before increasing quite steeply at the end of 2020. This suggests that drivers drove faster and more recklessly after the start of the pandemic and that they did not adjust their behavior as cars returned to the roads.
+
+
+
+
