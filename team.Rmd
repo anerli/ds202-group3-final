@@ -152,20 +152,25 @@ are a few states with lower accident rates than Iowa.
   
 <!-- Start of Jack --->
 
-#Load Data Frames
+# Accidents in Iowa
+
+### Load Data Frames
 ```{r, message=FALSE}
-census <- read_csv("/Users/jacknovak/Documents/DS202/ds202-group3-final/census.csv")%>%
+census <- read_csv("census.csv")%>%
   filter(STNAME == "Iowa", PRIMGEO_FLAG == 0, FUNCSTAT == "A")
-iowa <- read_csv("/Users/jacknovak/Documents/DS202/ds202-group3-final/US_Accidents_Dec20.csv", col_types = cols(End_Lat=col_character(),End_Lng=col_character()))%>%
+iowa <- read_csv("US_Accidents_Dec20.csv", col_types = cols(End_Lat=col_character(),End_Lng=col_character()))%>%
   select(State, Severity, Start_Time, Start_Lat, Start_Lng, `Wind_Speed(mph)`,Weather_Condition)%>%
   filter(State %in% "IA")
 
 county <- map_data("county")
 ```
 
+
+
+### Plot Accidents in Iowa
+
 We also decided to look at accidents close to home. Evident in the map below, accidents in Iowa cluster in areas we know to be the most congested; namely, many accidents occur around Des Moines and along I-35 and I-80. Additionally, Iowa's northwestern corner appears to exhibit disproportionately many severe accidents relative to non-severe ones.
 
-#Plot Accidents in Iowa
 ```{r}
 iowacounties<- county%>%
   filter(region %in% "iowa")
@@ -176,9 +181,11 @@ p<-p+labs(title="Accidents in Iowa", subtitle="Data from 2016 to 2020")+theme_ma
 p
 ```
 
+
+### Plot Severity by Wind Speed and Weather Type
+
 Nearly any Iowan can testify to the hazards of slippery weather. However, we sought to quantify weather's influence on accident frequency and severity by observing crashes recorded in Iowa over the past five years.
 
-#Plot Severity by Wind Speed and Weather Type
 ```{r}
 iowa1<-iowa%>%
   select(`Wind_Speed(mph)`,Severity, `Weather_Condition`)%>%
@@ -196,15 +203,17 @@ Based on the results, Iowans should limit driving on days with lots of precipita
 ggplot(iowa1, aes(y=`Average Severity`, x=`Average Wind Speed (mph)`))+geom_text(aes(label=`Weather_Condition`), size=2)+labs(title="Severity and Wind Speed by Weather Type")
 ```
 
-Iowans typically crash the most on weekdays. This result is pretty intuitive--people tend to drive more during the week.
 
-#Accidents in Iowa by Day of the Week
+
+### Accidents in Iowa by Day of the Week
 ```{r}
 iowa %>%
   mutate(Day = wday(Start_Time, label=TRUE, abbr=FALSE))%>%
   group_by(Day)%>%
   ggplot(aes(x=Day))+geom_bar()+labs(title="Accidents in Iowa by Weekday")
 ```
+
+Iowans typically crash the most on weekdays. This result is pretty intuitive--people tend to drive more during the week.
 
 <!-- End of Jack --->
 
