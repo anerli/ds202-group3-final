@@ -214,6 +214,16 @@ Although motor vehicle crashes are calamitous and will remain a problem into the
 
 Our data set supported the finding that the COVID-19 significantly increased the number and severity of motor vehicle crashes. We noted that the severity of crashes initially increased, then lulled, before increasing quite steeply at the end of 2020. This suggests that drivers drove faster and more recklessly after the start of the pandemic and that they did not adjust their behavior as cars returned to the roads.
 
+Contribution Statement:
 
+Anders:
+
+Eric:
+
+Jack: My analyses focused primarily on Iowa. I created a map of Iowa and two additional graphics to represent accidents by weekday and by weather type. I also contributed to this report as well as the project presentation.
+
+Murat:
+
+Ryan:
 
 
