@@ -150,23 +150,30 @@ are a few states with lower accident rates than Iowa.
 
 
 <!-- Start of Ryan --->
-# Accidents Given Age and Gender
 ```{r}
 suppressWarnings(library(dplyr))
 suppressWarnings(library(data.table))
 suppressWarnings(library(ggplot2))
 suppressWarnings(library(tidyverse))
-
 ```
 
 ```{r}
 data2 <- read_csv('genderAndAgeData.csv')
 data2 <- na.omit(data2)
 data2 <- data2 %>% rename(fatals = 'Fatalities in crash')
+
+f1 <- data2 %>% group_by(Age, Gender) %>% summarize(count = n()) %>% arrange(desc(count))
 ```
 
+## Accidents Given Age
+The graph on below shows the number of accidents by age and the two different colors are for men and women. Men consistently get in 2-3 times more accidents from ages 18-75.
+
+Younger people in general got in a lot more accidents. This is likely due to lack of experience and getting distracted while driving. Common distractions are phones and friends in the car, so teenagers and young adults learning to balance that while driving can be challenging. 
+
+The biggest drop offs are in the late 20’s to early 40’s. This could be due to maturing and becoming more responsible drivers over time. There is also a drop off at 60 and 75 years old which is likely due people driving less as they get older and retire. 
+
+I was interested in some of these numbers so I did some research and found that on average men drive 40% more miles per year than women, which would explain the general idea that men get in more accidents, but to see 2-3 times more accidents means there are still other factors playing a major role in why men get into more accidents. 
 ```{r}
-f1 <- data2 %>% group_by(Age, Gender) %>% summarize(count = n()) %>% arrange(desc(count))
 ggplot(f1, aes(x=Age, y = count, fill = Gender)) + geom_bar(stat="identity", position = "dodge") + xlab("Age (years)") + ylab("Number of Car Accidents") + ggtitle("Number of Accidents Given Age and Gender")
 
 data2$dates <- as.Date(data2$'Crash Date', "%m/%d/%y")
@@ -176,9 +183,18 @@ temp <- temp
 
 temp$group1 <- ifelse(temp$Age < 41, "Under35", "35andUp")
 temp2 <- temp %>% group_by(weekday, Gender) %>% filter(group1 == "Under35") %>% summarize(N = n()) %>% arrange(desc(N))
-ggplot(temp2, aes(x = reorder(weekday, -N), y = N, fill = Gender)) + geom_bar(stat = "identity", position = "dodge") + xlab("Day of the Week") + ylab("Number of Car Accidents") + ggtitle("Under 41 Age Group")
 
 temp3 <- temp %>% group_by(weekday, Gender) %>% filter(group1 == "35andUp") %>% summarize(N = n()) %>% arrange(desc(N))
+```
+
+## Accidents with Age and Gender
+Below are two graphs that show the number of car accidents by day of the week among men and women. The first graph is for Under 41 years old and the second graph is for 41 and older. The average age of someone in an accident in this data set was 41 so that is why I choose to use that as my cutoff in determining the groups. 
+
+We can see that Saturday has the most accidents for both age groups. There is a clear spike in men under 41 on Friday, Saturday, and Sunday, with Saturday being the highest. Every other group is relatively the same no matter what day of the week it is. Women are consistently around 50 and men are around 100 on 4 of the 7 days, and then it climbs to 125-200 on the other 3 days. 
+
+```{r}
+ggplot(temp2, aes(x = reorder(weekday, -N), y = N, fill = Gender)) + geom_bar(stat = "identity", position = "dodge") + xlab("Day of the Week") + ylab("Number of Car Accidents") + ggtitle("Under 41 Age Group")
+
 ggplot(temp3, aes(x = reorder(weekday, -N), y = N, fill = Gender)) + geom_bar(stat = "identity", position = "dodge") + xlab("Day of the Week") + ylab("Number of Car Accidents") + ggtitle("41 and Older Group")
 ```
 <!-- End of Ryan --->
@@ -411,6 +427,6 @@ Jack: My analyses focused primarily on Iowa. I created a map of Iowa and two add
 Murat: My analysis primarily focused on how weather conditions affected accidents by looking at the variable severity. I contributed to the team report and presentation. I also combined/edited the videos from my groupmates and I narrated the introduction part of the presentation.
 message.txt
 
-Ryan:
+Ryan: I focused my analysis on looking at car accidents amoung men and women. I compared the totals from different ages of men and women, as well as comparing the totals amoung men and women by the different days of the week. I also worked on the presentation and team report.
 
 
