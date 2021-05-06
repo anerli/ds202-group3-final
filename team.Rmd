@@ -53,10 +53,7 @@ We also use a chart to convert the state abbreviations to state names as well
 as a dataset contains census population counts.
 
 ```{r, warning=FALSE, message=FALSE}
-#acc_raw <- read_csv('US_Accidents_Dec20.csv')
-
-# TEMP
-acc_raw <- read_csv('US_Accidents_Sample.csv')
+acc_raw <- read_csv('US_Accidents_Dec20.csv')
 
 census_raw <- read.csv('census2010-2019.csv')
 states <- map_data('state')
