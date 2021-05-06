@@ -147,6 +147,41 @@ We can see Iowa highlighted in red. Iowa is clearly not the worst in terms of ac
 many states have far worse rates, but there is also still room for improvement as there
 are a few states with lower accident rates than Iowa.
 <!-- End of Anders --->
+
+
+<!-- Start of Ryan --->
+#Accidents Given Age and Gender
+```{r}
+suppressWarnings(library(dplyr))
+suppressWarnings(library(data.table))
+suppressWarnings(library(ggplot2))
+suppressWarnings(library(tidyverse))
+
+```
+
+```{r}
+data2 <- read_csv('genderAndAgeData.csv')
+data2 <- na.omit(data2)
+data2 <- data2 %>% rename(fatals = 'Fatalities in crash')
+```
+
+```{r}
+f1 <- data2 %>% group_by(Age, Gender) %>% summarize(count = n()) %>% arrange(desc(count))
+ggplot(f1, aes(x=Age, y = count, fill = Gender)) + geom_bar(stat="identity", position = "dodge") + xlab("Age (years)") + ylab("Number of Car Accidents") + ggtitle("Number of Accidents Given Age and Gender")
+
+data2$dates <- as.Date(data2$'Crash Date', "%m/%d/%y")
+temp <- data2
+temp$weekday <- weekdays(temp$dates)
+temp <- temp
+
+temp$group1 <- ifelse(temp$Age < 41, "Under35", "35andUp")
+temp2 <- temp %>% group_by(weekday, Gender) %>% filter(group1 == "Under35") %>% summarize(N = n()) %>% arrange(desc(N))
+ggplot(temp2, aes(x = reorder(weekday, -N), y = N, fill = Gender)) + geom_bar(stat = "identity", position = "dodge") + xlab("Day of the Week") + ylab("Number of Car Accidents") + ggtitle("Under 41 Age Group")
+
+temp3 <- temp %>% group_by(weekday, Gender) %>% filter(group1 == "35andUp") %>% summarize(N = n()) %>% arrange(desc(N))
+ggplot(temp3, aes(x = reorder(weekday, -N), y = N, fill = Gender)) + geom_bar(stat = "identity", position = "dodge") + xlab("Day of the Week") + ylab("Number of Car Accidents") + ggtitle("41 and Older Group")
+```
+<!-- End of Ryan --->
   
   
   
