@@ -11,6 +11,35 @@ library(lubridate)
 library(ggthemes)
 ```
 
+# Introduction
+
+Motor vehicle accidents are devastating and costly. With almost 35,000 people dying each year in the United States due to crashes that cost over $75 billion, there has to be something we can do to help. We focused our analysis on identifying trends that can be used to help minimize crashes. Our questions were:
+
+- What are common features of motor vehicle crashes?
+- What can be done to mitigate crashes?
+- How does Iowa compare to the nation as a whole?
+
+These questions focus on our goal of reducing the amount of crashes. Based on our analysis we’ll be aiming to come up with ideas like policy changes at the state or national level, and better education of what increases chances of crashes. 
+
+How we obtained and cleaned the dataset:
+
+Our main dataset is from Kaggle and is focused on traffic accidents from February 2016 through December 2020. The dataset collected all the information by utilizing APIs that captured data from different entities, specifically the US and state departments of transportation, law enforcement agencies, traffic cameras, and traffic sensors. In total there are about 3 million records in the dataset. We also used a second dataset from kaggle that collected data from 2011. This was helpful to supplement the other dataset because of the specific information in the records like age and gender. 
+
+To clean our datasets we removed null values and renamed some columns to simpler names so that the columns were easier to work with. We also converted the “Date” column into the Date format, so that for the time series we could easily sort the data by year. Some challenges we had with this dataset was the size of it being about 2 GB, well above the github limit, and figuring out the best way to use some of the columns like severity. Some variables, such as severity, were not clearly defined and interpreting our results was sometimes difficult.
+
+## Requirements
+### Libraries
+- tidyverse
+- lubridate
+- mapproj
+- ggthemes
+
+### Data
+- US_Accidents_Dec20.csv: Previously accessible via Kaggle, but has been updated since then. We uploaded
+the version we used so that the same one can be downloaded and moved to the working directory to run this Rmd and get the same results: https://iastate.box.com/s/3y1kikk2c6zpzhgv6t5g8kngc1ylupuk
+- us_accidents_df.csv: The zipped version of this was small enough to be uploaded to GitHub. Can extract this zip and move the file to the working directory.
+- Other datasets used were small and included directly in the repo, so no need to extract.
+
 <!-- Start of Anders --->
 # Overview of U.S. Motor Accidents
 
@@ -425,8 +454,7 @@ Eric: My analysis focused on the changes in number of daily accidents over the y
 Jack: My analyses focused primarily on Iowa. I created a map of Iowa and two additional graphics to represent accidents by weekday and by weather type. I also contributed to this report as well as the project presentation.
 
 Murat: My analysis primarily focused on how weather conditions affected accidents by looking at the variable severity. I contributed to the team report and presentation. I also combined/edited the videos from my groupmates and I narrated the introduction part of the presentation.
-message.txt
 
-Ryan: I focused my analysis on looking at car accidents amoung men and women. I compared the totals from different ages of men and women, as well as comparing the totals amoung men and women by the different days of the week. I also worked on the presentation and team report.
+Ryan: I focused my analysis on looking at car accidents among men and women. I compared the totals from different ages of men and women, as well as comparing the totals among men and women by the different days of the week. I also worked on the presentation and team report.
 
 
