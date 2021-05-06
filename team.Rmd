@@ -269,56 +269,6 @@ Iowans typically crash the most on weekdays. This result is pretty intuitive--pe
 
 <!-- End of Jack --->
 
-<!-- Start of Murat --->
-# Effects of Weather Conditions on Accidents
-
-```{r}
-accidents <- read.csv("us_accidents_df.csv", stringsAsFactors = FALSE)
-```
-
-
-First, lets make a frequency table for the variable severity. Table shows us that mode of the variable severity is 2. We can say there are few severity factors of 1 and 4 but 4 is being more common than 1.
-
-### A Frequency Table for Severity
-
-```{r}
-severity_count <- c(sum(accidents$Severity==1), sum(accidents$Severity==2), sum(accidents$Severity==3), sum(accidents$Severity==4))
-freq <- severity_count/sum(severity_count )
-barplot(freq, names.arg = 1:4, main = "Relative Frequencies of Severity")
-```
-
-Our histogram shows that reported temperature at 0 degrees Fahrenheit, there are few accidents since this weather is not very common in the US.
-
-As the temperature starts to increase, the number of accidents also increase mainly because there are more people out when it is warmer. When the temperature increase from there, accidents starts going down since less people are out due to weather being too hot
-
-### Analyzing Temperature
-
-```{r}
-hist(accidents$Temperature.F., breaks=seq(-90, 205, 5), xlab = "Temperature (Fahrenheit)", main = "Histogram of Temperature")
-```
-
-Finally lets look the weather conditions by severity. There are many different weather conditions reported but we are going to only visualize the ones which caused more than 100 accidents.
-
-```{r}
-weather_cond<-table(accidents$Weather_Condition, accidents$Severity)
-
-weather_cond_df<-data.frame(weather_cond)
-colnames(weather_cond_df)<-c("Weather_Condition","Severity","Accidents")
-weather_cond_df <- weather_cond_df %>% 
-  filter(Severity == 4) %>% 
-  arrange(desc(Accidents)) %>% 
-  filter(Accidents > 100)
-
-b <- ggplot(data=weather_cond_df, aes(x=Weather_Condition, y=Accidents)) + geom_bar(stat="identity") + coord_flip()
-b
-
-```
-
-As our analysis shows, we conclude that weather condition does not have a strong impact on accident severity.
-
-<!-- End of Murat --->
-
-
 
 <!-- Start of Eric --->
 
