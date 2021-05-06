@@ -287,11 +287,13 @@ ggplot(iowa1, aes(y=`Average Severity`, x=`Average Wind Speed (mph)`))+geom_text
 
 ### Accidents in Iowa by Day of the Week
 ```{r}
-# FIXME
-#iowa %>%
-#  mutate(Day = wday(Start_Time, label=TRUE, abbr=FALSE))%>%
-#  group_by(Day)%>%
-#  ggplot(aes(x=Day))+geom_bar()+labs(title="Accidents in Iowa by Weekday")
+iowa = iowa %>% separate(Start_Time, into = c("Date", "Time"), sep = " ") %>% mutate(Date = ymd(Date)) 
+```
+
+```{r}
+iowa$Day = wday(iowa$Date)
+
+iowa %>% group_by(Day) %>% ggplot(aes(x=Day))+geom_bar()+labs(title="Accidents in Iowa by Weekday")
 ```
 
 Iowans typically crash the most on weekdays. This result is pretty intuitive--people tend to drive more during the week.
